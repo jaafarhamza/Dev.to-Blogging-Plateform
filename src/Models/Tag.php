@@ -2,20 +2,10 @@
 namespace App\Models;
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-use Src\Config\MethodORM;
-use App\Config\Database;
+use App\Config\MethodORM;
 
-class Tag{
-    
-
-
-
+class Tag extends MethodORM {
+    public function __construct() {
+        parent::__construct('tags');
+    }
 }
-Database::connection();
-
-
-
-
-
-
-
