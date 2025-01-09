@@ -1,51 +1,148 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" class="h-full bg-gray-50">
 <head>
-    <title>tags</title>
+    <title>Gestion des Tags</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <h1>tags</h1>
-    <a href="../tags/create.php">Create Tag</a>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Actions</th>
-        </tr>
-        <?php
-        require_once __DIR__ . '/../../Controllers/TagController.php'; 
-        use App\Controllers\TagController;
+<body class="h-full">
+    <div class="min-h-full">
+        <!-- En-tête -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex justify-between items-center">
+                <a href="../Dashboard/Dashboard.php"
+                           class="inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                            Annuler
+                        </a>
+                    <h1 class="text-2xl font-bold text-gray-900">Gestion des Tags</h1>
+                    <a href="../tags/create.php" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Nouveau Tag
+                    </a>
+                </div>
+            </div>
+        </header>
 
-        $controller = new TagController();
-        if (isset($_GET['delete_id'])) {
-            $id = intval($_GET['delete_id']); 
-            if ($controller->deleteTag($id)) {
-                header('Location: /tags?message=Tag deleted successfully.');
-                exit();
-            } else {
-                header('Location: /tags?error=deletion_failed');
-                exit();
-            }
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Messages de notification -->
+            <?php if (isset($_GET['message'])): ?>
+                <div class="mb-4 rounded-lg bg-green-50 p-4 animate-fade-in">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">
+                                <?= htmlspecialchars($_GET['message']) ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Tableau des tags -->
+            <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <?php
+                            require_once __DIR__ . '/../../../vendor/autoload.php';
+                            use App\Controllers\TagController;
+
+                            $controller = new TagController();
+                            if (isset($_GET['delete_id'])) {
+                                $id = intval($_GET['delete_id']); 
+                                if ($controller->deleteTag($id)) {
+                                    header('Location: ../tags/index.php');
+                                    exit();
+                                } else {
+                                    header('Location: /tags?error=La suppression a échoué');
+                                    exit();
+                                }
+                            }
+                            $tags = $controller->index();
+                            if (isset($tags) && is_array($tags)): 
+                                foreach ($tags as $tag): 
+                            ?>
+                                <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <?= $tag['id'] ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <span class="px-2 py-1 text-sm rounded-full bg-indigo-100 text-indigo-700">
+                                                <?= htmlspecialchars($tag['name']) ?>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <a href="../tags/edit.php?id=<?= htmlspecialchars($tag['id']) ?>" 
+                                               class="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Modifier
+                                            </a>
+                                            <a href="?delete_id=<?= htmlspecialchars($tag['id']) ?>" 
+                                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce tag ?');"
+                                               class="inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Supprimer
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <div class="flex flex-col items-center py-6">
+                                            <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                            </svg>
+                                            <p class="mt-2">Aucun tag trouvé.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        $tags = $controller->index();
-        if (isset($tags) && is_array($tags)): 
-            foreach ($tags as $Tag): 
-        ?>
-            <tr>
-                <td><?= $Tag['id'] ?></td>
-                <td><?= $Tag['name'] ?></td>
-                <td>
-                <a href="../tags/edit.php?id=<?= htmlspecialchars($Tag['id']) ?>">Edit</a>
-                    <a href="?delete_id=<?= htmlspecialchars($Tag['id']) ?>" 
-                       onclick="return confirm('Are you sure you want to delete this Tag?');">Delete</a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="3">No tags found.</td>
-            </tr>
-        <?php endif; ?>
-    </table>
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+    </style>
 </body>
 </html>

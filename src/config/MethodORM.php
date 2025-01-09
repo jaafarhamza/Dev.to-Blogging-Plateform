@@ -5,8 +5,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use PDO;
 
 class MethodORM {
-    private $table;
-    private $conn;
+    protected $table;
+    protected $conn;
 
     public function __construct($table) {
         $this->table = $table;
@@ -58,7 +58,7 @@ class MethodORM {
         echo 'Read successful';
         return $result;
     }
-    public function find($id) {
+    public function findAll($id) {
         $stmt = $this->conn->prepare("SELECT * FROM " . $this->table . " WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
