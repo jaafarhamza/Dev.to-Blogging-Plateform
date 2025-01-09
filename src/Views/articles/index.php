@@ -2,10 +2,8 @@
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use App\Controllers\ArticleController;
-use App\Models\Article;
 $controller = new ArticleController();
 $articles = $controller->index();
-
 ?>
 
 <!DOCTYPE html>
@@ -78,20 +76,20 @@ $articles = $controller->index();
 
     <?php
 
-function getStatusClass($status)
-{
-    return match ($status) {
-        'published' => 'px-2 py-1 rounded text-sm bg-green-100 text-green-800',
-        'draft' => 'px-2 py-1 rounded text-sm bg-gray-100 text-gray-800',
-        'scheduled' => 'px-2 py-1 rounded text-sm bg-yellow-100 text-yellow-800',
-        default => 'px-2 py-1 rounded text-sm bg-gray-100 text-gray-800'
-    };
-}
-
-function formatDate($date)
-{
-    return date('d/m/Y', strtotime($date));
-}
-?>
+        function getStatusClass($status)
+        {
+            return match ($status) {
+                'published' => 'px-2 py-1 rounded text-sm bg-green-100 text-green-800',
+                'draft' => 'px-2 py-1 rounded text-sm bg-gray-100 text-gray-800',
+                'scheduled' => 'px-2 py-1 rounded text-sm bg-yellow-100 text-yellow-800',
+                default => 'px-2 py-1 rounded text-sm bg-gray-100 text-gray-800'
+            };
+        }
+        
+        function formatDate($date)
+        {
+            return date('d/m/Y', strtotime($date));
+        }
+        ?>
 </body>
 </html>

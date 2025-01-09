@@ -29,9 +29,9 @@ try {
                 $_SESSION['last_login'] = time();
 
                 if ($user['role'] === 'admin') {
-                    header("Location: /admin/dashboard");
+                    header("Location: ../Dashboard/Dashboard.php");
                 } else {
-                    header("Location: /dashboard");
+                    header("Location: ../Home/home.php");
                 }
                 exit;
             } else {
@@ -65,7 +65,7 @@ try {
                 <div class="mb-4 p-4 rounded bg-red-100 border border-red-400 text-red-700">
                     <?=htmlspecialchars($error)?>
                 </div>
-            <?php endif;?>
+            <?php endif; ?>
 
             <form method="POST" action="" class="space-y-6">
                 <div>

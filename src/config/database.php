@@ -1,15 +1,18 @@
 <?php
 namespace App\Config;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use PDO;
 use PDOException;
 
-class Database {
+class Database
+{
     private static $pdo;
 
-    public static function connection() {
+    public static function connection()
+    {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
         $dotenv->load();
 
@@ -21,7 +24,7 @@ class Database {
         try {
             self::$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
             self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            echo 'Done';
+            // echo 'Done';
         } catch (PDOException $e) {
             die("Database connection failed: " . $e->getMessage());
         }
@@ -29,6 +32,5 @@ class Database {
     }
 }
 
-$test=new Database;
+$test = new Database;
 $test::connection();
-?>
